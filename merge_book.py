@@ -58,14 +58,16 @@ def get_lower_volume_chapters(all_chapters):
 
 def merge_pdfs(pdf_files, output_path):
     """Merge a list of PDF files into a single PDF."""
-    merger = PdfMerger()
-    
-    for pdf_file in pdf_files:
-        print(f"  Adding: {os.path.basename(pdf_file)}")
-        merger.append(pdf_file)
-    
-    merger.write(output_path)
-    merger.close()
+    with PdfMerger() as merger:
+        for pdf_file in pdf_files:
+            print(f"  Adding: {os.path.basename(pdf_file)}")
+            try:
+                merger.append(pdf_file)
+            except Exception as e:
+                print(f"  Warning: Failed to add {os.path.basename(pdf_file)}: {e}")
+                continue
+        
+        merger.write(output_path)
     print(f"Created: {output_path}")
 
 
